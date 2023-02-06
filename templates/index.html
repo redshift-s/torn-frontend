@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title class=center>Whackamole</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css')}}">
+    </head>
+    <body>
+    <h1 class="styled">PT Whackamole</h1>
+    <div align="center">
+    <form action="{{ url_for('index') }}" method="post">
+        <input type="text" name="input_value">
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+    <table>
+    <caption>
+        <header>
+            <h2>
+                {{ faction }}
+            </h2>
+        </header>
+    </caption>
+        <thead>
+            <tr>
+                <th class="sortable-text">Faction</th>
+                <th class="sortable">Level</th>
+                <th>Name</th>
+                <th class="sortable-text">Description</th>
+                <th class="sortable-text">Status</th>
+                <th class="sortable">Last action</th>
+                <th>Attack</th>
+                <th class="sortable">BS in B</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.faction }}</td>
+                <td>{{ row.level }}</td>
+                <td><a href="{{ row.profile }}" target="_blank" class="{{ row.status }}"> {{ row.member_name }} </a></td>
+                <td>{{ row.description }}</td>
+                <td>{{ row.status }}</td>
+                <td>{{ row.last_action }}</td>
+                <td><a href="{{ row.attack }}" target="_blank">Attack </a></td>
+                <td>{{ row.bs }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+    </body>
+<script>
+document.querySelectorAll(".sortable").forEach(function(th) {
+      th.addEventListener("click", function() {
+        const table = th.closest("table");
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        
+        const isAscending = (th.getAttribute("data-sort-direction") || "asc") === "asc";
+        const columnIndex = Array.from(th.parentNode.children).indexOf(th);
+        const compare = (a, b) => {
+          const valueA = parseFloat(a.children[columnIndex].innerHTML);
+          const valueB = parseFloat(b.children[columnIndex].innerHTML);
+          return isAscending ? valueA - valueB : valueB - valueA;
+        };
+        
+        rows.sort(compare);
+        tbody.innerHTML = "";
+        tbody.append(...rows);
+        
+        th.setAttribute("data-sort-direction", isAscending ? "desc" : "asc");
+      });
+    });
+    document.querySelectorAll(".sortable-text").forEach(function(th) {
+      th.addEventListener("click", function() {
+        const table = th.closest("table");
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        
+        const isAscending = (th.getAttribute("data-sort-direction") || "asc") === "asc";
+        const columnIndex = Array.from(th.parentNode.children).indexOf(th);
+        const compare = (a, b) => {
+          const valueA = a.children[columnIndex].innerHTML;
+          const valueB = b.children[columnIndex].innerHTML;
+          return isAscending ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+        };
+        
+        rows.sort(compare);
+        tbody.innerHTML = "";
+        tbody.append(...rows);
+        
+        th.setAttribute("data-sort-direction", isAscending ? "desc" : "asc");
+      });
+    });
+
+</script>
+</html>
